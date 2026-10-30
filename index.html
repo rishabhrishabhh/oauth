@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Will your OAuth app get approved?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#f5f6f4;--card:#fff;--ink:#1b2430;--mute:#5b6675;--line:#d9dde3;--go:#2f7d5b;--mid:#c98a1b;--stop:#b5453a;
+--tested:#1d4ed8;--sourced:#0f766e;--inferred:#b45309;--unknown:#64748b;--accent:#1b2430;--onaccent:#fff}
+@media(prefers-color-scheme:dark){:root{--paper:#12171d;--card:#1a212a;--ink:#e8ecf1;--mute:#9aa6b5;--line:#2c3541;--go:#4fb98a;--mid:#e0a63a;--stop:#e0786c;
+--tested:#7aa2ff;--sourced:#4cc2b5;--inferred:#e3a15a;--unknown:#94a3b8;--accent:#e8ecf1;--onaccent:#12171d}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 "IBM Plex Sans",system-ui,sans-serif}
+main{max-width:780px;margin:0 auto;padding:40px 20px 80px}
+h1,h2,h3{font-family:"Bricolage Grotesque","IBM Plex Sans",system-ui,sans-serif;line-height:1.15;margin:0}
+h1{font-size:clamp(30px,6vw,44px);margin-bottom:10px}
+h2{font-size:22px;margin:40px 0 12px}
+h3{font-size:17px}
+p{margin:0 0 10px}.mute{color:var(--mute)}
+form{display:flex;gap:8px;margin:22px 0 10px}
+input[type=text]{flex:1;min-width:0;padding:12px 14px;font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px}
+button,.btn{font:inherit;font-weight:600;cursor:pointer;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:var(--onaccent);padding:12px 18px}
+button.ghost{background:transparent;color:var(--ink);border-color:var(--line);padding:6px 12px;font-weight:500}
+:focus-visible{outline:3px solid var(--tested);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#status{min-height:24px;margin:14px 0}
+.err{color:var(--stop)}
+.verdict{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px;margin-top:24px}
+.verdict h2{margin:0 0 6px;font-size:26px}
+.track{display:flex;height:12px;border-radius:6px;overflow:hidden;margin:26px 0 6px;position:relative}
+.track i{display:block}
+.marker{position:absolute;top:-8px;width:4px;height:28px;background:var(--ink);border-radius:2px;border:2px solid var(--card);box-sizing:content-box}
+.stations{display:flex;font-size:13px;color:var(--mute)}
+.stations span{text-align:center}.stations .on{color:var(--ink);font-weight:600}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}form{flex-direction:column}}
+.box{border-top:2px solid var(--line);padding-top:10px}
+table{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}
+td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:1px 8px;border-radius:99px;border:1.5px solid currentColor;white-space:nowrap}
+.t-Tested{color:var(--tested)}.t-Sourced{color:var(--sourced);border-style:solid}.t-Inferred{color:var(--inferred);border-style:dashed}.t-Unknown{color:var(--unknown);border-style:dotted}
+.who{font-size:12px;font-weight:600;padding:1px 8px;border-radius:6px;background:var(--line)}
+.who.agent{background:var(--sourced);color:var(--onaccent)}.who.human{background:var(--ink);color:var(--paper)}
+ol.steps{padding:0;list-style:none;counter-reset:s}
+ol.steps li{counter-increment:s;padding:12px 0 12px 40px;border-bottom:1px solid var(--line);position:relative}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:12px;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--ink);text-align:center;font-weight:600;font-size:14px;line-height:23px}
+a.ref{font-size:12px;text-decoration:none;margin-right:4px}
+a{color:var(--tested)}
+details{border-bottom:1px solid var(--line);padding:10px 0}
+summary{cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 4px;font-size:14px}
+.banner{border-left:4px solid var(--mid);background:var(--card);padding:10px 14px;margin-top:20px;border-radius:0 8px 8px 0;font-size:14px}
+.sm{font-size:14px}
+</style>
+</head>
+<body>
+<main>
+<h1>Will your OAuth app get approved?</h1>
+<p class="mute">Look up an app to see how hard approval is, how long it takes, what can block you, and what to do next. Every claim shows how we know it.</p>
+<form id="f"><input type="text" id="q" placeholder="App name or website, for example Slack or notion.so" aria-label="App name or website" autocomplete="off"><button>Look up</button></form>
+<div class="chips" id="lib"><span class="mute sm">Ready-made guides:</span></div>
+<div id="status" role="status" aria-live="polite"></div>
+<div id="out"></div>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+const h=(t,a={},...k)=>{const e=document.createElement(t);for(const[n,v]of Object.entries(a))n==="class"?e.className=v:e.setAttribute(n,v);for(const c of k.flat())e.append(c&&c.nodeType?c:document.createTextNode(c??""));return e};
+const safe=u=>/^https?:\/\//i.test(u)?u:"#";
+const TIERS=[["self_serve","Self-serve",3,"var(--go)"],["review_gated","Review-gated",6,"var(--mid)"],["partner_gated","Partner-gated",4,"var(--stop)"]];
+const ORDER=["Tested","Sourced","Inferred","Unknown"];
+let lib=[],current=null;
+
+function status(msg,bad){const s=$("#status");s.className=bad?"err":"mute";s.textContent=msg||""}
+
+function refs(g,ids){const m=Object.fromEntries(g.claims.map(c=>[c.id,c]));
+  return h("div",{},(ids||[]).map(id=>h("a",{class:"ref",href:"#claim-"+id},m[id]?`${id} `:id,m[id]?h("span",{class:"tag t-"+m[id].tag},m[id].tag):"")))}
+
+function renderGuide(g,meta={}){
+  current=g;const out=$("#out");out.replaceChildren();
+  const v=g.verdict,tier=TIERS.find(t=>t[0]===v.tier);
+  const total=13,pos=((v.score+0.5)/total)*100;
+  out.append(h("section",{class:"verdict"},
+    h("h2",{},`${g.app}: ${tier?tier[1]:v.tier}`),
+    h("p",{},v.headline),
+    h("p",{class:"mute sm"},g.scenario?`Assumed use: ${g.scenario}`:""),
+    h("div",{class:"track",role:"img","aria-label":`Difficulty ${v.score} out of 12, ${tier?tier[1]:v.tier}`},TIERS.map(t=>h("i",{style:`width:${t[2]/total*100}%;background:${t[3]}`})),h("div",{class:"marker",style:`left:calc(${pos}% - 4px)`})),
+    h("div",{class:"stations"},TIERS.map(t=>h("span",{class:t[0]===v.tier?"on":"",style:`width:${t[2]/total*100}%`},t[1]))),
+    h("div",{class:"grid"},
+      h("div",{class:"box"},h("h3",{},"Your effort"),h("p",{},v.your_effort.summary),refs(g,v.your_effort.claim_ids)),
+      h("div",{class:"box"},h("h3",{},"Waiting on the provider"),h("p",{},v.provider_wait.summary),refs(g,v.provider_wait.claim_ids))),
+    h("details",{},h("summary",{},`Why score ${v.score} of 12?`),
+      h("table",{},v.score_breakdown.map(b=>h("tr",{},h("td",{},b.factor.replaceAll("_"," ")),h("td",{},"+"+b.points),h("td",{},refs(g,[b.claim_id])))))))
+  );
+  if(g.generated_live)out.append(h("div",{class:"banner"},`Generated live on ${g.generated_at} by an agent and not reviewed by a person. `,meta.sources_seen!=null?`Checked its sources against ${meta.sources_seen} search results. `:"",meta.repaired?"The first draft failed our evidence checks and was corrected once. ":"",(meta.remaining_problems||[]).length?`Still unresolved: ${meta.remaining_problems.join("; ")}. `:"",h("button",{class:"ghost",type:"button",id:"dl"},"Download JSON")));
+  out.append(h("h2",{},"What to do"),h("ol",{class:"steps"},(g.steps||[]).map(s=>h("li",{},h("strong",{},s.title+" "),h("span",{class:"who "+(s.who==="either"?"":s.who)},s.who==="agent"?"Agent can do this":s.who==="human"?"You take over":"Either"),h("p",{class:"mute sm"},s.detail),refs(g,s.claim_ids)))));
+  out.append(h("h2",{},"If you get stuck"),...(g.blockers||[]).map(b=>h("div",{class:"box",style:"margin-bottom:12px"},h("p",{},h("strong",{},"If: "),b.if),h("p",{},h("strong",{},"Do: "),b.do),refs(g,b.claim_ids))));
+  out.append(h("h2",{},"Evidence"),h("div",{class:"legend"},
+    ...ORDER.map(t=>h("span",{},h("span",{class:"tag t-"+t},t)," ",String(g.claims.filter(c=>c.tag===t).length)))),
+    h("p",{class:"mute sm"},"Tested: an agent probed it. Sourced: a linked document. Inferred: reasoned from other evidence. Unknown: we looked and could not confirm."));
+  g.claims.forEach(c=>out.append(h("details",{id:"claim-"+c.id},
+    h("summary",{},h("span",{class:"tag t-"+c.tag},c.tag)," ",c.statement," ",h("span",{class:"mute sm"},`(${c.confidence} confidence)`)),
+    c.basis?h("p",{class:"sm"},"Basis: "+c.basis):"",c.what_we_tried?h("p",{class:"sm"},"What we tried: "+c.what_we_tried):"",c.note?h("p",{class:"sm"},"Note: "+c.note):"",
+    ...(c.sources||[]).map(s=>h("p",{class:"sm"},h("a",{href:safe(s.url),target:"_blank",rel:"noopener"},s.title||s.url)," ",h("span",{class:"mute"},`${s.type}, read ${s.retrieved}`))))));
+  if((g.expected_vs_found||[]).length){out.append(h("h2",{},"What we expected and what we found"),h("table",{},g.expected_vs_found.map(e=>h("tr",{},h("td",{},e.expected),h("td",{},e.found),h("td",{},h("strong",{},e.status))))))}
+  const dl=$("#dl");if(dl)dl.onclick=()=>{const a=h("a",{href:URL.createObjectURL(new Blob([JSON.stringify(g,null,2)],{type:"application/json"})),download:(g.slug||"guide")+".json"});a.click()};
+  status("");out.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+}
+
+async function loadLibrary(slug){status("Loading guide…");try{const r=await fetch(`guides/${slug}.json`);if(!r.ok)throw 0;renderGuide(await r.json());history.replaceState(null,"","#"+slug)}catch{status("Could not load that guide.",true)}}
+
+async function generate(app,retry){
+  status("Researching "+app+" with the agent. This usually takes 30 to 60 seconds.");$("#out").replaceChildren();
+  let r,d;
+  try{r=await fetch("api/generate",{method:"POST",headers:{"content-type":"application/json","x-access-code":sessionStorage.getItem("code")||""},body:JSON.stringify({app})});
+    try{d=await r.json()}catch{d=null}}catch{return status("Could not reach the generator.",true)}
+  if(r.status===401&&!retry){const c=prompt("Enter the access code to run live research:");if(c){sessionStorage.setItem("code",c);return generate(app,true)}return status("Access code needed for live research.",true)}
+  if(r.status===404||r.status===405)return status("Live research is not available on this site. It needs the Vercel deployment with an Anthropic API key (see the README). The ready-made guides above still work.",true);
+  if(!r.ok||!d||!d.guide)return status((d&&d.error)||"Research failed. Try again.",true);
+  renderGuide(d.guide,d);
+}
+
+$("#f").addEventListener("submit",e=>{e.preventDefault();const q=$("#q").value.trim();if(q.length<2)return status("Enter an app name or website.",true);
+  const l=q.toLowerCase(),m=lib.find(x=>l===x.slug||x.app.toLowerCase().includes(l)||l.includes(x.slug.split("-")[0]));
+  m?loadLibrary(m.slug):generate(q)});
+function route(){const s=location.hash.slice(1);if(s&&lib.some(x=>x.slug===s))loadLibrary(s)}
+addEventListener("hashchange",route);
+(async()=>{try{lib=await(await fetch("guides/index.json")).json()}catch{status("Could not load the guide list.",true)}
+  lib.forEach(x=>$("#lib").append(h("button",{class:"ghost",type:"button"},x.app,),)); 
+  [...$("#lib").querySelectorAll("button")].forEach((b,i)=>b.onclick=()=>loadLibrary(lib[i].slug));route()})();
+</script>
+</body>
+</html>

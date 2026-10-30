@@ -1,0 +1,57 @@
+{
+  "app": "Google (Gmail API)",
+  "slug": "google-gmail",
+  "generated_at": "2026-10-28",
+  "scenario": "Agent reads a user's inbox (gmail.readonly) and sends mail on their behalf",
+  "verdict": {
+    "tier": "review_gated",
+    "score": 7,
+    "score_breakdown": [
+      { "factor": "review_required", "points": 2, "claim_id": "c1" },
+      { "factor": "security_audit", "points": 3, "claim_id": "c6" },
+      { "factor": "annual_revalidation", "points": 1, "claim_id": "c3" },
+      { "factor": "paid_requirement", "points": 1, "claim_id": "c7" }
+    ],
+    "headline": "Heavy review-gated: works in testing today, but reading mail in production needs Google verification plus an annual third-party security assessment.",
+    "your_effort": { "summary": "Roughly 1-3 days of hands-on work to prepare (privacy policy, demo video, scope justification, consent screen), plus remediation time if the security scan finds issues.", "claim_ids": ["c13", "c9"] },
+    "provider_wait": { "summary": "Plan for several weeks end to end. Sources disagree on exact numbers and Google does not commit to one.", "claim_ids": ["c8", "c9"] }
+  },
+  "claims": [
+    { "id": "c1", "statement": "Apps requesting sensitive or restricted scopes must complete Google's OAuth app verification before being granted access.", "tag": "Sourced", "confidence": "high", "checked_at": "2026-10-28", "sources": [{ "url": "https://support.google.com/cloud/answer/9110914", "title": "OAuth App Verification Help Center", "type": "primary", "retrieved": "2026-10-28" }] },
+    { "id": "c2", "statement": "Apps using only non-sensitive scopes do not have to complete verification, but need lighter brand verification to show an app name and logo on the consent screen.", "tag": "Sourced", "confidence": "high", "checked_at": "2026-10-28", "sources": [{ "url": "https://support.google.com/cloud/answer/9110914", "title": "OAuth App Verification Help Center", "type": "primary", "retrieved": "2026-10-28" }] },
+    { "id": "c3", "statement": "Apps with restricted scopes must re-verify every year.", "tag": "Sourced", "confidence": "high", "checked_at": "2026-10-28", "sources": [{ "url": "https://support.google.com/cloud/answer/9110914", "title": "OAuth App Verification Help Center", "type": "primary", "retrieved": "2026-10-28" }] },
+    { "id": "c4", "statement": "gmail.readonly, gmail.modify, gmail.metadata, gmail.compose and https://mail.google.com/ are restricted scopes.", "tag": "Sourced", "confidence": "medium", "checked_at": "2026-10-28", "sources": [{ "url": "https://docs.unified.to/skills/gmail-oauth-app/SKILL.md", "title": "Unified.to Gmail OAuth skill", "type": "secondary", "retrieved": "2026-10-28" }, { "url": "https://composio.dev/content/ship-gmail-integration-in-minutes", "title": "Composio: Gmail integration guide", "type": "secondary", "retrieved": "2026-10-28" }], "note": "Both sources are vendors. Confirm against Google's Gmail scopes page, which the console also shows automatically." },
+    { "id": "c5", "statement": "gmail.send is a sensitive scope, not restricted, so a send-only agent avoids the security assessment.", "tag": "Sourced", "confidence": "medium", "checked_at": "2026-10-28", "sources": [{ "url": "https://docs.unified.to/skills/gmail-oauth-app/SKILL.md", "title": "Unified.to Gmail OAuth skill", "type": "secondary", "retrieved": "2026-10-28" }, { "url": "https://nango.dev/docs/api-integrations/google-shared/google-security-review", "title": "Nango: Google security review", "type": "secondary", "retrieved": "2026-10-28" }] },
+    { "id": "c6", "statement": "Restricted scopes require a CASA security assessment performed by a Google-approved assessor, in addition to verification.", "tag": "Sourced", "confidence": "medium", "checked_at": "2026-10-28", "sources": [{ "url": "https://www.leviathansecurity.com/programs/google-casa-cloud-application-security-assessment", "title": "Leviathan: CASA", "type": "secondary", "retrieved": "2026-10-28" }, { "url": "https://nango.dev/docs/api-integrations/google-shared/google-security-review", "title": "Nango: Google security review", "type": "secondary", "retrieved": "2026-10-28" }], "note": "The assessor is an interested party. Google's review team contacts you when it is time to start." },
+    { "id": "c7", "statement": "CASA assessments are paid; third-party estimates run from a few hundred to a few thousand dollars per year.", "tag": "Sourced", "confidence": "low", "checked_at": "2026-10-28", "sources": [{ "url": "https://composio.dev/content/ship-gmail-integration-in-minutes", "title": "Composio: Gmail integration guide", "type": "secondary", "retrieved": "2026-10-28" }], "note": "Single vendor estimate; assessor price lists not checked." },
+    { "id": "c8", "statement": "Verification for sensitive-only scopes is reported to take usually under a week.", "tag": "Sourced", "confidence": "low", "checked_at": "2026-10-28", "sources": [{ "url": "https://nango.dev/docs/api-integrations/google-shared/google-security-review", "title": "Nango: Google security review", "type": "secondary", "retrieved": "2026-10-28" }] },
+    { "id": "c9", "statement": "Plan for roughly 3-8 weeks from submission to approval for restricted scopes, including the security assessment.", "tag": "Inferred", "confidence": "low", "checked_at": "2026-10-28", "basis": "Composio quotes Google as saying restricted review can take several weeks; Nango says approval often lands in under a week and a CASA Tier 2 in about 5 days is feasible; another source says Google commits to no number. The range is a planning buffer built from these conflicting reports, not a measured figure." },
+    { "id": "c10", "statement": "Until verified, an app requesting sensitive or restricted scopes shows an 'unverified app' warning and is capped at 100 users.", "tag": "Sourced", "confidence": "low", "checked_at": "2026-10-28", "sources": [{ "url": "https://singhamandeep.com/?p=1402", "title": "Google OAuth verification timeline", "type": "secondary", "retrieved": "2026-10-28" }], "note": "From a consultancy blog; confirm the cap in the Cloud Console." },
+    { "id": "c11", "statement": "A mismatch between scopes in your code and scopes on the consent screen forces the unverified-app screen and can stall verification.", "tag": "Sourced", "confidence": "low", "checked_at": "2026-10-28", "sources": [{ "url": "https://singhamandeep.com/?p=1402", "title": "Google OAuth verification timeline", "type": "secondary", "retrieved": "2026-10-28" }] },
+    { "id": "c12", "statement": "In Testing mode, refresh tokens have a shortened lifetime, which can quietly break long-lived agent connections.", "tag": "Sourced", "confidence": "low", "checked_at": "2026-10-28", "sources": [{ "url": "https://singhamandeep.com/?p=1402", "title": "Google OAuth verification timeline", "type": "secondary", "retrieved": "2026-10-28" }] },
+    { "id": "c13", "statement": "Restricted-scope review expects a privacy policy, an app demo video, and scope justifications.", "tag": "Sourced", "confidence": "low", "checked_at": "2026-10-28", "sources": [{ "url": "https://composio.dev/content/ship-gmail-integration-in-minutes", "title": "Composio: Gmail integration guide", "type": "secondary", "retrieved": "2026-10-28" }], "note": "Exact required assets should be read from Google's verification requirements page." },
+    { "id": "c14", "statement": "Live probes of Google's discovery document and authorize endpoint were not run.", "tag": "Unknown", "confidence": "high", "checked_at": "2026-10-28", "what_we_tried": "The research sandbox only allows a fixed list of domains and cannot reach accounts.google.com, so no probe could run. The probe runner must execute from the deployed app or a developer's machine." },
+    { "id": "c15", "statement": "Account creation, 2FA, and proving ownership of your app's domain must be done by a human.", "tag": "Inferred", "confidence": "medium", "checked_at": "2026-10-28", "basis": "Standard pattern for cloud consoles; no source fetched confirming the domain-ownership step for Google specifically." },
+    { "id": "c16", "statement": "Managed OAuth lets you skip your own verification and assessment, because they apply to the app owned by whoever holds the Google Cloud project.", "tag": "Sourced", "confidence": "low", "checked_at": "2026-10-28", "sources": [{ "url": "https://composio.dev/content/ship-gmail-integration-in-minutes", "title": "Composio: Gmail integration guide", "type": "secondary", "retrieved": "2026-10-28" }], "note": "Source is a vendor of managed OAuth. Trade-offs (consent-screen branding, control, limits) not yet checked." }
+  ],
+  "steps": [
+    { "title": "Decide your scopes first", "who": "either", "detail": "Send-only agents can use gmail.send (sensitive). Reading mail needs a restricted scope, which adds the security assessment.", "claim_ids": ["c4", "c5"] },
+    { "title": "Create the Google Cloud project and consent screen", "who": "human", "detail": "Needs your Google account, 2FA, and your app's domain.", "claim_ids": ["c15"] },
+    { "title": "Add only the scopes you will really use; keep code and consent screen identical", "who": "agent", "detail": "Agent can diff scopes in code against the consent-screen list.", "claim_ids": ["c11"] },
+    { "title": "Prepare the pre-submission kit", "who": "agent", "detail": "Agent drafts the privacy policy checklist, scope justification text, and demo video script.", "claim_ids": ["c13"] },
+    { "title": "Submit for verification; start the security assessment when Google asks", "who": "human", "detail": "Pick an approved assessor, run a first scan, fix findings.", "claim_ids": ["c1", "c6"] },
+    { "title": "Put a yearly re-verification date on the calendar", "who": "agent", "detail": "Agent can set the reminder.", "claim_ids": ["c3"] }
+  ],
+  "blockers": [
+    { "if": "Users see an 'unverified app' warning", "do": "Check that code scopes match the consent screen, and confirm whether you are past the 100-user cap while verification is pending.", "claim_ids": ["c10", "c11"] },
+    { "if": "Connections die after about a week", "do": "You are probably still in Testing mode; publish the app or plan for re-auth.", "claim_ids": ["c12"] },
+    { "if": "You are blocked on a restricted-scope review", "do": "Narrow to the fewest scopes; consider gmail.send-only, or use a managed OAuth app.", "claim_ids": ["c5", "c16"] }
+  ],
+  "expected_vs_found": [
+    { "expected": "All Gmail scopes are restricted and need the security audit.", "found": "Corrected: gmail.send is sensitive only, so send-only agents skip the audit.", "status": "corrected", "claim_ids": ["c5"] },
+    { "expected": "Approval is a one-time job.", "found": "Corrected: restricted scopes re-verify every year.", "status": "corrected", "claim_ids": ["c3"] },
+    { "expected": "Google publishes how long review takes.", "found": "Corrected: sources disagree and Google reportedly commits to no number, so we give a range with low confidence.", "status": "corrected", "claim_ids": ["c9"] },
+    { "expected": "An agent can verify the flow with live probes.", "found": "Not possible from the research sandbox; probes must run elsewhere.", "status": "unverified", "claim_ids": ["c14"] },
+    { "expected": "Restricted scopes need a security assessment.", "found": "Confirmed by multiple secondary sources; Google's own page confirms annual re-verification.", "status": "confirmed", "claim_ids": ["c6", "c3"] }
+  ]
+}

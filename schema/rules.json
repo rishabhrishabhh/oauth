@@ -1,0 +1,17 @@
+{
+  "tags": ["Tested", "Sourced", "Inferred", "Unknown"],
+  "confidence": ["high", "medium", "low"],
+  "tiers": [
+    { "id": "self_serve", "min": 0, "max": 2 },
+    { "id": "review_gated", "min": 3, "max": 8 },
+    { "id": "partner_gated", "min": 9, "max": 12 }
+  ],
+  "score_factors": {
+    "review_required": 2,
+    "business_verification": 2,
+    "security_audit": 3,
+    "paid_requirement": 1,
+    "partner_program": 3,
+    "annual_revalidation": 1
+  }
+}
